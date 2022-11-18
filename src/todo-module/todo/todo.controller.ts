@@ -16,9 +16,14 @@ export class TodoController {
     private todoList =[];
 
     @Get()
-    getTodos(){
-         this.todoservice.getTodos()
+    async getTodos(){
+   return await  this.todoservice.getTodos()
     }
+
+    @Get()
+    async getallTodos() {
+        return await this.getallTodos();
+        }
 
     
 
@@ -43,14 +48,14 @@ export class TodoController {
         @Param('id',) id:number
     )
     {
-        this.todoservice.removeTodoavecTypeOrm(id);
+       return await this.todoservice.removeTodoavecTypeOrm(id);
     }
     @Delete()
     async softdeleteTodoavectypeORM(
         @Param('id',) id:number
     )
     {
-        this.todoservice.softRemovetodo(id);
+      return await  this.todoservice.softRemovetodo(id);
     }
     @Get('recover/:id')
     async revocer(
@@ -68,21 +73,37 @@ export class TodoController {
     }
     
     @Post('/add')
-    addTodo(@Body() addtodo: AjouterDto){
-       this.todoservice.addTodo(addtodo)
+    async addTodo(@Body() addtodo: AjouterDto){
+       return await this.todoservice.addTodo(addtodo)
 
     }
 
     @Post('/update')
-    updateTodo(@Param('id') id, @Body() updatetodo: MajTodo){
-        this.todoservice.updateTodo(id,updatetodo)
+    async updateTodo(@Param('id') id, @Body() updatetodo: MajTodo){
+       return await this.todoservice.updateTodo(id,updatetodo)
     }
 
     @Delete('/delete/:id')
-    deleteTodo( @Param('id') id){
-       this.todoservice.deleteTodo(id)
+    async deleteTodo( @Param('id') id){
+     return await  this.todoservice.deleteTodo(id)
+    }
+    @Get('/statusanddata')
+    async getTodoByStringAndStatus(
+        @Param('string') ch: String,
+        @Param('status') st:TodoStatusEnum,
+    )
+    {
+        return await this.todoservice.querytodobydescriptionornameorstatus(ch,st)
     }
 
+    @Get('/statusanddatav2')
+    async getTodoByStringAndStatusv2(
+        @Param('string') ch: String,
+        @Param('status') st:TodoStatusEnum,
+    )
+    {
+        return await this.todoservice.querytodobydescriptionornameorstatusv2(ch,st)
+    }
 
 
   
