@@ -8,6 +8,13 @@ export class AjouterDto {
   @IsString()
   @IsNotEmpty()
   description: string;
+   @IsString()
+  @IsNotEmpty()
+   created: string;
+   @IsString()
+  @IsNotEmpty()
+  id: string;
+
 
 }
 

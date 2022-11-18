@@ -1,70 +1,82 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post } from '@nestjs/common';
-import { Todo, TodoStatusEnum } from '../entities/todo';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { TodoEntity, TodoStatusEnum } from '../entities/todo';
 import { v4 as uuidv4 } from 'uuid';
 import { AjouterDto } from '../dtos/ajouter-dto';
 import { MajTodo } from '../dtos/maj-todo';
+import { TodoserviceService } from './todoservice/todoservice.service';
+import { UpdatetodoDto } from './dto/update-todo.dto';
 
 
 @Controller('todo')
 export class TodoController {
+    
+    constructor(private todoservice: TodoserviceService) { }
 
     private todoList =[];
 
     @Get()
     getTodos(){
-        return this.todoList;
+         this.todoservice.getTodos()
     }
 
     @Get('/:id')
-    getTodoById(@Param('id') id : string): Todo{
-       return this.findById(id)
+    getTodoById(@Param('id') id : string){
+         this.todoservice.getTodoById(id);
     }
 
 
     @Post('/add')
     addTodo(@Body() addtodo: AjouterDto){
-       const date = new Date();
-       const id = uuidv4();
-       const {name, description} = addtodo;
-       const newTodo = {
-          id: id,
-          name : name,
-          description: description,
-          createdAt: date,
-          status : TodoStatusEnum.waiting
-       }
-       this.todoList.push(newTodo);
+       this.todoservice.addTodo(addtodo)
 
     }
 
     @Post('/update')
     updateTodo(@Param('id') id, @Body() updatetodo: MajTodo){
-        const todo = this.getTodoById(id);
-        // if (todo.name) {
-        //     todo.name = updatetodo.name;
-        // }
-       
-        if (todo.description) {
-            todo.description = updatetodo.description;
-        }
+        this.todoservice.updateTodo(id,updatetodo)
     }
 
     @Delete('/delete/:id')
     deleteTodo( @Param('id') id){
-        const index = this.todoList.findIndex((todo) => todo.id === id);
-        if (index >= 0 ) {
-            this.todoList.splice(index, 1);
-          } else {
-            throw new NotFoundException('Todo not found');
-          }
+       this.todoservice.deleteTodo(id)
     }
-    private findById(id: string): Todo{
-        const todo = this.todoList.find((newTodo)=> newTodo.id == newTodo);
-       if (!todo){
-        throw new NotFoundException(' Todo not found')
-       }
-       return todo
+    @Post()
+    async createTodoavectypeORM(
+        @Body() updatetodoDto: UpdatetodoDto,
+    
+    ):Promise<TodoEntity>
+    {
+       return await this.todoservice.addTodoavecTypeOrm(updatetodoDto);
     }
+    @Patch()
+    async updateTodoavectypeORM(
+        @Body() updatetodoDto: UpdatetodoDto,
+        @Param('id') id:number
+    ):Promise<TodoEntity>
+    {
+       return await this.todoservice.updateTodoavecTypeOrm(id,updatetodoDto);
+    }
+    @Delete()
+    async deleteTodoavectypeORM(
+        @Param('id',) id:number
+    )
+    {
+        this.todoservice.removeTodoavecTypeOrm(id);
+    }
+    @Delete()
+    async softdeleteTodoavectypeORM(
+        @Param('id',) id:number
+    )
+    {
+        this.todoservice.softRemovetodo(id);
+    }
+    @Get('recover/:id')
+    async revocer(
+    @Param('id',) id: number)
+     {
+        return await this.revocer(id)
+    }
+  
 
 }
 

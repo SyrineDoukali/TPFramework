@@ -1,12 +1,7 @@
 import { IsNotEmpty, IsString } from "@nestjs/class-validator";
+import { PickType } from "@nestjs/mapped-types";
+import { AjouterDto } from "./ajouter-dto";
+export class MajTodo extends PickType(AjouterDto,['description','name'] )
+{
 
-export class MajTodo {
-    @IsString()
-    @IsNotEmpty()
-    name: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    description: string;
-  
 }
